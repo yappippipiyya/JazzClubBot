@@ -1,0 +1,13 @@
+irregular_sessions.json
+__pycache__/
+data/
+log/
+.breakpoints
+.replit
+poetry.lock
+pyproject.toml
+server.py
+.gitpod.yml
+.vscode/
+.env
+venv/
