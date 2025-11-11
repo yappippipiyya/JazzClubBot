@@ -11,12 +11,51 @@ class StandardGacha(commands.Cog):
   def __init__(self, bot:commands.Bot):
     self.bot = bot
     self.default_conditions = {
+      "book_id": "全て",
       "M_m": "全て",
       "key": "全て",
       "beat": "全て",
       "type": "全て"
     }
     self.conditions = self.default_conditions.copy()
+
+
+  @app_commands.command(name="edit_gacha_button", description="[admin]スタンダードガチャのボタンを編集します")
+  async def edit_gacha_button(self, interaction: discord.Interaction, message_url: str):
+    if not await check.is_admin(interaction):
+      return
+
+    await interaction.response.defer(ephemeral=True, thinking=True)
+
+    splited_url = message_url.split("/")
+    try:
+      channel_id = int(splited_url[-2])
+      message_id = int(splited_url[-1])
+    except Exception:
+      await interaction.followup.send("形式がちがう")
+      return
+
+    channel = self.bot.get_channel(channel_id)
+    if not channel:
+      try:
+        channel = await self.bot.fetch_channel(channel_id)
+      except Exception:
+        await interaction.followup.send("チャンネルが取得できなかった")
+        return
+
+    try:
+      message = await channel.fetch_message(message_id) #type: ignore
+    except Exception:
+      await interaction.followup.send("メッセージが取得できなかった")
+      return
+
+    view = await self.get_view()
+
+    await message.edit(view=view) #type: ignore
+
+    await interaction.delete_original_response()
+    return
+
 
   @app_commands.command(name="send_gacha_button", description="[admin]スタンダードガチャのボタンを設置します")
   async def send_gacha_button(self, interaction: discord.Interaction):

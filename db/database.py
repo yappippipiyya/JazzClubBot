@@ -62,6 +62,7 @@ def get_songs(condition_dict: dict[str, str], limit: int = 3) -> list[Song]:
 
 
 class Choices(TypedDict):
+  book_id: list[int]
   M_m: list[str]
   key: list[str]
   beat: list[str]
@@ -70,6 +71,7 @@ class Choices(TypedDict):
 
 def get_choices() -> Choices:
   choices: Choices = {
+    "book_id": [],
     "M_m": [],
     "key": [],
     "beat": [],
