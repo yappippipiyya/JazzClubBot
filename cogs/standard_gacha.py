@@ -11,7 +11,7 @@ class StandardGacha(commands.Cog):
   def __init__(self, bot:commands.Bot):
     self.bot = bot
     self.default_conditions = {
-      "book_id": "全て",
+      "book_num": "全て",
       "M_m": "全て",
       "key": "全て",
       "beat": "全て",

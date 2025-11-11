@@ -24,7 +24,7 @@ def get_songs(condition_dict: dict[str, str], limit: int = 3) -> list[Song]:
   with sqlite3.connect(db_path) as conn:
     cursor = conn.cursor()
 
-    base_query = "SELECT id, book_id, song_name, composer, M_m, key, beat, type FROM songs"
+    base_query = "SELECT id, book_num, song_name, composer, M_m, key, beat, type FROM songs"
     conditions = []
     params = []
 
@@ -62,7 +62,7 @@ def get_songs(condition_dict: dict[str, str], limit: int = 3) -> list[Song]:
 
 
 class Choices(TypedDict):
-  book_id: list[int]
+  book_num: list[int]
   M_m: list[str]
   key: list[str]
   beat: list[str]
@@ -71,7 +71,7 @@ class Choices(TypedDict):
 
 def get_choices() -> Choices:
   choices: Choices = {
-    "book_id": [],
+    "book_num": [],
     "M_m": [],
     "key": [],
     "beat": [],
