@@ -80,7 +80,7 @@ class ReturnButton(discord.ui.View):
     self.original_message = original_message
 
   @discord.ui.button(label="大丈夫", style=discord.ButtonStyle.grey, custom_id="ok")
-  async def ok(self, interaction: discord.Interaction, button: discord.ui.Button):
+  async def ok(self, interaction: discord.Interaction, _: discord.ui.Button):
     now = datetime.now()
     description = (
       f"{interaction.user.mention}（代理）が鍵を返しました。\n"
@@ -91,7 +91,7 @@ class ReturnButton(discord.ui.View):
     return
 
   @discord.ui.button(label="間違えた", style=discord.ButtonStyle.grey, custom_id="no")
-  async def no(self, interaction: discord.Interaction, button: discord.ui.Button):
+  async def no(self, interaction: discord.Interaction, _: discord.ui.Button):
     await interaction.response.defer(ephemeral=True, thinking=True)
     await interaction.delete_original_response()
     await interaction.followup.delete_message(interaction.message.id)
