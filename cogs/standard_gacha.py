@@ -11,11 +11,11 @@ class StandardGacha(commands.Cog):
   def __init__(self, bot:commands.Bot):
     self.bot = bot
     self.default_conditions = {
-      "book_num": "全て",
-      "M_m": "全て",
-      "key": "全て",
-      "beat": "全て",
-      "type": "全て"
+      "book_num": ["全て"],
+      "M_m": ["全て"],
+      "key": ["全て"],
+      "beat": ["全て"],
+      "type": ["全て"]
     }
     self.conditions = self.default_conditions.copy()
 
@@ -62,11 +62,18 @@ class StandardGacha(commands.Cog):
       values = interaction.data.get("values")
       if not values:
         return
+
       custom = custom_id.replace("gacha_", "")
-      self.conditions[custom] = values[0]
+
+      if (self.conditions[custom] == ["全て"]) and ("全て" in values):
+        values.remove("全て")
+
+      self.conditions[custom] = values
+
 
       view = await self.get_view()
       await interaction.response.edit_message(view=view)
+      return
 
 
   async def get_view(self):
@@ -82,7 +89,22 @@ class StandardGacha(commands.Cog):
       container.add_item(ui.TextDisplay(f"### {key}"))
 
       actionrow = ui.ActionRow()
-      actionrow.add_item(ui.Select(placeholder=self.conditions[key] if self.conditions[key] else choices[key][0], options=[discord.SelectOption(label=choice) for choice in choices[key]], custom_id=f"gacha_{key}"))
+
+      if (count := len(self.conditions[key])) == 1:
+        placeholder = self.conditions[key][0]
+      else:
+        placeholder = f"{count}件選択中"
+
+      actionrow.add_item(ui.Select(
+        placeholder=placeholder,
+        options=[discord.SelectOption(
+          label=choice,
+          default=str(choice) in str(self.conditions[key]),
+          ) for choice in choices[key]
+        ],
+        custom_id=f"gacha_{key}",
+        max_values=1 if len(choices[key]) == 3 else len(choices[key]),
+      ))
       container.add_item(actionrow)
 
     actionrow2 = ui.ActionRow()
@@ -115,8 +137,8 @@ class StandardGacha(commands.Cog):
     )
 
     value = ""
-    for key, condition in self.conditions.items():
-      value += f"{key} : {condition}\n"
+    for key, conditions in self.conditions.items():
+      value += f"{key} : {'・'.join(conditions)}\n"
     embed.add_field(name="条件", value=value)
 
     await interaction.followup.send(embed=embed, ephemeral=True)

@@ -20,7 +20,7 @@ class Song:
     self.type = type
 
 
-def get_songs(condition_dict: dict[str, str], limit: int = 3) -> list[Song]:
+def get_songs(condition_dict: dict[str, list[str]], limit: int = 3) -> list[Song]:
   with sqlite3.connect(db_path) as conn:
     cursor = conn.cursor()
 
@@ -28,10 +28,11 @@ def get_songs(condition_dict: dict[str, str], limit: int = 3) -> list[Song]:
     conditions = []
     params = []
 
-    for key, condition in condition_dict.items():
-      if condition and condition != "全て":
-        conditions.append(f"{key} = ?")
-        params.append(condition)
+    for key, condition_list in condition_dict.items():
+      if condition_list and not "全て" in condition_list:
+        placeholders = ", ".join(["?"] * len(condition_list))
+        conditions.append(f"{key} IN ({placeholders})")
+        params.extend(condition_list)
 
     query = base_query
     if conditions:
