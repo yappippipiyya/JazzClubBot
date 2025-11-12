@@ -118,7 +118,10 @@ class Managekey(commands.Cog):
 
   @commands.Cog.listener()
   async def on_interaction(self, interaction: discord.Interaction):
-    custom_id = interaction.data.get("custom_id", "")
+    if not interaction.data:
+      return
+
+    custom_id = interaction.data.get("custom_id")
     if not custom_id:
       return
 
@@ -141,7 +144,7 @@ class Managekey(commands.Cog):
         await interaction.response.send_message("エラー")
         return
 
-      if not str(interaction.user.id) in interaction.message.embeds[0].description:
+      if not str(interaction.user.id) in interaction.message.embeds[0].description: #type: ignore
         view = ReturnButton(self.bot, original_message=interaction.message)
         await interaction.response.send_message("あなた鍵借りた人じゃないけど大丈夫そう？", view=view, ephemeral=True)
         return
