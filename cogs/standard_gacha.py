@@ -1,6 +1,7 @@
 from discord.ext import commands
 from discord import app_commands, ui
 import discord
+import urllib.parse
 
 import check
 from db.database import get_choices, get_songs
@@ -129,7 +130,8 @@ class StandardGacha(commands.Cog):
     else:
       description = f"## こんなのとか！\n"
       for song in songs:
-        description += f"- **[{song.book_num}]{song.song_name} / {song.composer}**\n"
+        encoded_song_name = urllib.parse.quote(song.song_name)
+        description += f"- **[[{song.book_num}]{song.song_name} / {song.composer}](<https://jazzstandard.info/results.php?keyword={encoded_song_name}>)**\n"
 
     embed = discord.Embed(
       description=description,
